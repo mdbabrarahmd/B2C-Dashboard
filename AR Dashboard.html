@@ -2446,7 +2446,7 @@ function excPrint2(){
       kpi('OD%',odPct,'#C00000')+
       kpi('Credit Term',termLabel)+
       kpi('DSO',(c.dso||'—')+'d')+
-      kpi('Sales 2026 YTD','SAR '+(c.sales_26+(entry.excAmt||0)).toLocaleString())+
+      kpi('Sales 2026 YTD','SAR '+c.sales_26.toLocaleString())+
       '</tr></table>';
     var odDetail='<div style="font-size:.7rem;color:#6B7A99;margin-bottom:8px">'+
       'OD 1-30d: <b style="color:#C00000">SAR '+c.od1.toLocaleString()+'</b> &middot; '+
@@ -2487,7 +2487,7 @@ var pS22=c.sales_26+(entry.excAmt||0);
       kpi('OD% at M+3',m3.ar>0?(m3.od/m3.ar*100).toFixed(1)+'%':'0%','#C00000')+
       kpi('DSO at M+3',m3Dso2!=null?m3Dso2+'d':'—')+
       kpi('Avail. Credit M+3','SAR '+m3.avail.toLocaleString(),m3.avail>0?'#1A7A4A':'#C00000')+
-      kpi('Sales 2026 YTD','SAR '+c.sales_26.toLocaleString())+
+      kpi('Sales 2026 YTD','SAR '+(c.sales_26+(entry.excAmt||0)).toLocaleString())+
       '</tr></table>';
     entries+='<div style="border:1px solid #dde3ec;border-radius:6px;padding:14px 16px;margin-bottom:22px">'+
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'+
