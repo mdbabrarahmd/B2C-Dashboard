@@ -337,6 +337,17 @@ td:nth-child(4),td:nth-child(5){text-align:center}
 .fh-qdots{display:flex;gap:14px;flex-wrap:wrap}
 .fh-qdot{display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--mut)}
 .fh-qdot-sq{width:12px;height:12px;border-radius:2px;flex-shrink:0}
+
+.ch-yr-dd{position:relative;display:inline-block}
+.ch-yr-btn{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--card);cursor:pointer;font-size:.72rem;font-weight:700;color:var(--txt)}
+.ch-yr-btn:hover{background:var(--lt)}
+.ch-yr-panel{display:none;position:absolute;top:calc(100%+3px);left:0;z-index:300;background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;min-width:155px;box-shadow:0 6px 18px rgba(0,0,0,.1)}
+.ch-yr-panel.open{display:block}
+.ch-yr-panel label{display:flex;align-items:center;gap:6px;font-size:.74rem;padding:3px 4px;border-radius:4px;cursor:pointer}
+.ch-yr-panel label:hover{background:var(--lt)}
+.ch-yr-panel input[type=checkbox]{width:13px;height:13px;accent-color:#1F3864;cursor:pointer}
+.ch-yr-actions{display:flex;gap:5px;border-top:1px solid var(--bdr);padding-top:6px;margin-top:5px}
+.ch-yr-actions button{flex:1;padding:3px;font-size:.67rem;border-radius:4px;border:1px solid var(--bdr);cursor:pointer;background:var(--lt)}
 </style><style>:root{--nav:#B91C1C!important}nav.nav{background:#B91C1C!important}</style><div style="position:fixed;top:0;right:0;z-index:9999;background:#B91C1C;color:#fff;font-size:.68rem;font-weight:700;padding:2px 10px;letter-spacing:.5px;border-radius:0 0 0 6px">LIVE DATA</div>
 </head>
 <body>
@@ -398,6 +409,47 @@ td:nth-child(4),td:nth-child(5){text-align:center}
 </div>
 <!-- CHANNELS -->
 <div class="pg" id="pg-ch">
+  <!-- Year-month filters for channels page -->
+  <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
+    <span style="font-size:.65rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.4px">Year:</span>
+    <!-- 2024-2025 months -->
+    <div class="ch-yr-dd" id="ch-dd-2425">
+      <div class="ch-yr-btn" onclick="chYrToggle('ch-dd-2425')">
+        <span id="ch-2425-lbl">2024–2025: All</span> &#x25BC;
+      </div>
+      <div class="ch-yr-panel" id="ch-dd-2425-panel">
+        <div style="font-size:.6rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px">2024 &amp; 2025 months</div>
+        <label><input type="checkbox" class="ch-cb-2425" value="0" onchange="chYrChange2425()"> January</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="1" onchange="chYrChange2425()"> February</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="2" onchange="chYrChange2425()"> March</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="3" onchange="chYrChange2425()"> April</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="4" onchange="chYrChange2425()"> May</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="5" onchange="chYrChange2425()"> June</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="6" onchange="chYrChange2425()"> July</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="7" onchange="chYrChange2425()"> August</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="8" onchange="chYrChange2425()"> September</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="9" onchange="chYrChange2425()"> October</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="10" onchange="chYrChange2425()"> November</label>
+        <label><input type="checkbox" class="ch-cb-2425" value="11" onchange="chYrChange2425()"> December</label>
+        <div class="ch-yr-actions"><button onclick="chYrClear2425()">All</button><button onclick="chYrClear2425()">Clear</button></div>
+      </div>
+    </div>
+    <!-- 2026 months -->
+    <div class="ch-yr-dd" id="ch-dd-26">
+      <div class="ch-yr-btn" onclick="chYrToggle('ch-dd-26')">
+        <span id="ch-26-lbl">2026: Jan–Apr (YTD)</span> &#x25BC;
+      </div>
+      <div class="ch-yr-panel" id="ch-dd-26-panel">
+        <div style="font-size:.6rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px">2026 months</div>
+        <label><input type="checkbox" class="ch-cb-26" value="0" onchange="chYrChange26()"> January</label>
+        <label><input type="checkbox" class="ch-cb-26" value="1" onchange="chYrChange26()"> February</label>
+        <label><input type="checkbox" class="ch-cb-26" value="2" onchange="chYrChange26()"> March</label>
+        <label><input type="checkbox" class="ch-cb-26" value="3" onchange="chYrChange26()"> April</label>
+        <label><input type="checkbox" class="ch-cb-26" value="4" onchange="chYrChange26()"> May</label>
+        <div class="ch-yr-actions"><button onclick="chYrClear26()">YTD (All)</button><button onclick="chYrClear26()">Clear</button></div>
+      </div>
+    </div>
+  </div>
   <div class="per-bar">
     <label>Period:</label>
     <button class="per-btn ch-mon" onclick="toggleMon(0,this)" title="Toggle January">Jan</button>
@@ -1368,6 +1420,9 @@ function renderClsCustomers(cls){
 
 /* ── CLASS-AWARE chPer ── */
 function chPerCls(ch,months,yr,cls){
+  // Apply year-specific month overrides from channel page dropdowns
+  if(yr===0||yr===1){if(window._chMons2425Override)months=window._chMons2425Override;}
+  if(yr===2){if(window._chMons26Override)months=window._chMons26Override;else months=[0,1,2,3];}
   var base=[0,12,24][yr],maxIdx=D.periods.length-1;
   var idxs=months.map(function(mo){return base+mo;}).filter(function(i){return i<=maxIdx;});
   if(!idxs.length)return null;
@@ -2247,6 +2302,7 @@ function renderExcList(){
       {l:'AR (MTD)',v:'SAR '+f(c.balance),col:'#1F4E79'},
       {l:'Avail. Credit',v:'SAR '+f(Math.max(0,(c.credit_limit||0)-c.balance)),col:(c.credit_limit>0&&c.balance>=c.credit_limit)?'var(--red)':'var(--grn)'},
       {l:'AR Utilization',v:arUtil+'%',col:parseFloat(arUtil)>=100?'var(--red)':parseFloat(arUtil)>=80?'var(--amb)':'var(--grn)'},
+      {l:'Coll. '+(D.periods[D.periods.length-1]||'May 26'),v:(function(){var ts3=TS[name]||{};return 'SAR '+f(ts3.coll_ts?Math.round(ts3.coll_ts[D.periods.length-1]||0):0);}()),col:'var(--grn)'},
       {l:'Total OD',v:'SAR '+f(c.total_od),col:'var(--red)'},
       {l:'OD %',v:odPct+'%',col:parseFloat(odPct)>30?'var(--red)':parseFloat(odPct)>10?'var(--amb)':'var(--grn)'},
       {l:'Credit Term',v:termLabel,col:'var(--txt)'},
@@ -2254,6 +2310,7 @@ function renderExcList(){
       {l:'Sales 2024',v:'SAR '+f(c.sales_24),col:'var(--txt)'},
       {l:'Sales 2025',v:'SAR '+f(c.sales_25),col:'var(--txt)'},
       {l:'Sales 2026 YTD',v:'SAR '+f(c.sales_26),col:'var(--txt)'},
+      {l:'Channel Stock',v:'SAR '+f(c.channel_stock||0),col:'#1D4ED8'},
       {l:'Channel Stock',v:'SAR '+f(c.channel_stock||0),col:'#1D4ED8'},
       {l:'OUD',v:'SAR '+f(c.oud||0),col:'#7C3AED'},
       {l:'Channel Stk (incl. OUD)',v:'SAR '+f(c.ttl_channel_stk||0),col:'#0F766E'},
@@ -2524,7 +2581,7 @@ var pS22=c.sales_26+(entry.excAmt||0);
       kpi('Avail. Credit M+3','SAR '+m3.avail.toLocaleString(),m3.avail>0?'#1A7A4A':'#C00000')+
       kpi('Sales 2026 YTD','SAR '+(c.sales_26+(entry.excAmt||0)).toLocaleString())+
       '</tr></table>';
-    entries+='<div style="border:1px solid #dde3ec;border-radius:6px;padding:14px 16px;margin-bottom:22px">'+
+    entries+='<div style="border:1px solid #dde3ec;border-radius:6px;padding:14px 16px;margin-bottom:22px;page-break-after:always">'+
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'+
         '<strong style="font-size:.95rem">'+name+'</strong> &nbsp;'+stBadge+
         (entry.excAmt>0?' &nbsp;<span style="background:#E0F2FE;color:#1F4E79;font-size:.72rem;padding:2px 8px;border-radius:4px">Exception: SAR '+entry.excAmt.toLocaleString()+'</span>':'')+
@@ -3194,6 +3251,58 @@ function _efhGoP(p){
 }
 
 
+
+
+/* ── Channel page year filters ── */
+window._chSelMons2425=[];
+window._chSelMons26=[];
+function chYrToggle(id){
+  var p=document.getElementById(id+'-panel');
+  if(!p)return;
+  var open=p.classList.contains('open');
+  document.querySelectorAll('.ch-yr-panel.open').forEach(function(x){x.classList.remove('open');});
+  if(!open)p.classList.add('open');
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.ch-yr-dd'))
+    document.querySelectorAll('.ch-yr-panel.open').forEach(function(p){p.classList.remove('open');});
+});
+function chYrChange2425(){
+  window._chSelMons2425=[];
+  document.querySelectorAll('.ch-cb-2425:checked').forEach(function(cb){window._chSelMons2425.push(+cb.value);});
+  var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var lbl=window._chSelMons2425.length?window._chSelMons2425.slice().sort(function(a,b){return a-b;}).map(function(m){return MN[m];}).join(','):'All';
+  document.getElementById('ch-2425-lbl').textContent='2024–2025: '+lbl;
+  _applyChYrFilter();
+}
+function chYrClear2425(){
+  window._chSelMons2425=[];
+  document.querySelectorAll('.ch-cb-2425').forEach(function(c){c.checked=false;});
+  document.getElementById('ch-2425-lbl').textContent='2024–2025: All';
+  _applyChYrFilter();
+}
+function chYrChange26(){
+  window._chSelMons26=[];
+  document.querySelectorAll('.ch-cb-26:checked').forEach(function(cb){window._chSelMons26.push(+cb.value);});
+  var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var lbl=window._chSelMons26.length?window._chSelMons26.slice().sort(function(a,b){return a-b;}).map(function(m){return MN[m];}).join(','):'YTD (All)';
+  document.getElementById('ch-26-lbl').textContent='2026: '+lbl;
+  _applyChYrFilter();
+}
+function chYrClear26(){
+  window._chSelMons26=[];
+  document.querySelectorAll('.ch-cb-26').forEach(function(c){c.checked=false;});
+  document.getElementById('ch-26-lbl').textContent='2026: YTD (Jan–Apr)';
+  _applyChYrFilter();
+}
+function _applyChYrFilter(){
+  // Store in _selMonths-compatible format and trigger renderChPage
+  // 2424/25 filter replaces the global _selMonths for those years
+  // 2026 filter replaces _selMonths for 2026
+  window._chMons2425Override=window._chSelMons2425.length?window._chSelMons2425:null;
+  window._chMons26Override=window._chSelMons26.length?window._chSelMons26:null;
+  renderChPage();
+}
 
 filt();
 </script>
