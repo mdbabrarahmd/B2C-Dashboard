@@ -2336,9 +2336,7 @@ function renderExcList(){
       {l:'Sales 2024',v:'SAR '+f(c.sales_24),col:'var(--txt)'},
       {l:'Sales 2025',v:'SAR '+f(c.sales_25),col:'var(--txt)'},
       {l:'Sales 2026 YTD',v:'SAR '+f(c.sales_26),col:'var(--txt)'},
-      {l:'Channel Stock',v:'SAR '+f(c.channel_stock||0),col:'#1D4ED8'},
-      {l:'OUD',v:'SAR '+f(c.oud||0),col:'#7C3AED'},
-      {l:'Channel Stk (incl. OUD)',v:'SAR '+f(c.ttl_channel_stk||0),col:'#0F766E'},
+      {l:'Total Channel Stk',v:'SAR '+f(c.ttl_channel_stk||0),col:'#0F766E'},
     ].map(function(m){return'<div class="exc-m"><div class="exc-ml">'+m.l+'</div><div class="exc-mv" style="color:'+m.col+'">'+m.v+'</div></div>';}).join('');
     var agingDetail='<div style="font-size:.67rem;color:var(--mut);margin-top:6px;margin-bottom:4px">'
       +'OD 1-30d: <b style="color:#F87171">SAR '+f(c.od1)+'</b> &nbsp;&middot;&nbsp; '
@@ -2583,9 +2581,7 @@ function excPrint2(){
       '</tr></table>';
     // Channel stock row
     var stkRow='<table style="width:100%;border-collapse:collapse;margin-bottom:4px"><tr>'+
-      kpi('Channel Stock','SAR '+(c.channel_stock||0).toLocaleString(),'#1D4ED8')+
-      kpi('OUD','SAR '+(c.oud||0).toLocaleString(),'#7C3AED')+
-      kpi('Channel Stk (incl. OUD)','SAR '+(c.ttl_channel_stk||0).toLocaleString(),'#0F766E')+
+      kpi('Total Channel Stk','SAR '+(c.ttl_channel_stk||0).toLocaleString(),'#0F766E')+
       '</tr></table>';
     // Collection trend: Feb→Mar→Apr→May
     var collRow='<div style="margin-bottom:6px">'
