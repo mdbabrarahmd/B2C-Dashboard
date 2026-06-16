@@ -446,17 +446,10 @@ td:nth-child(4),td:nth-child(5){text-align:center}
         <label><input type="checkbox" class="ch-cb-26" value="2" onchange="chYrChange26()"> March</label>
         <label><input type="checkbox" class="ch-cb-26" value="3" onchange="chYrChange26()"> April</label>
         <label><input type="checkbox" class="ch-cb-26" value="4" onchange="chYrChange26()"> May</label>
+        <label><input type="checkbox" class="ch-cb-26" value="5" onchange="chYrChange26()"> June</label>
         <div class="ch-yr-actions"><button onclick="chYrClear26()">YTD (All)</button><button onclick="chYrClear26()">Clear</button></div>
       </div>
     </div>
-  </div>
-  <div class="per-bar">
-    <label>Period:</label>
-    <button class="per-btn" onclick="setPer('q1',this)">Q1 (Jan–Mar)</button>
-    <button class="per-btn on" onclick="setPer('ytd',this)">YTD (Jan–May)</button>
-    <button class="per-btn" onclick="setPer('h1',this)">H1 (Jan–Jun)</button>
-    <button class="per-btn" onclick="setPer('fy',this)">Full Year</button>
-    <span id="per-lbl" style="font-size:.73rem;color:var(--mut);margin-left:auto">Comparing Jan–May across 2024 · 2025 · 2026</span>
   </div>
   <div class="per-bar" style="margin-bottom:4px">
     <label>Class:</label>
@@ -1234,10 +1227,14 @@ function drillOv(i){var card=window._ovCards[i];if(!card||!card.drill)return;var
   const c24=T.collections.slice(0,12).reduce((a,b)=>a+b,0),c25=T.collections.slice(12,24).reduce((a,b)=>a+b,0),c26=T.collections.slice(24).reduce((a,b)=>a+b,0);
   const b24=T.balance[11],b25=T.balance[23],b26=T.balance[T.balance.length-1];
   const od24=T.total_od[11],od25=T.total_od[23],od26=T.total_od[T.total_od.length-1];
+  // Jan–May 2025 same-period comparison (indices 12–16)
+  const s25ytd=T.sales.slice(12,17).reduce((a,b)=>a+b,0);
+  const c25ytd=T.collections.slice(12,17).reduce((a,b)=>a+b,0);
+  const b25ytd=T.balance[16],od25ytd=T.total_od[16];
   const years=[
     {yr:'2024',fill:'#1F4E79',s:s24,c:c24,b:b24,od:od24,prev:null},
     {yr:'2025',fill:'#2E75B6',s:s25,c:c25,b:b25,od:od25,prev:{s:s24,c:c24,b:b24,od:od24}},
-    {yr:'2026 YTD',fill:'#1A7A4A',s:s26,c:c26,b:b26,od:od26,prev:{s:s25/3,c:c25/3,b:b25,od:od25}},
+    {yr:'2026 YTD',fill:'#1A7A4A',s:s26,c:c26,b:b26,od:od26,prev:{s:s25ytd,c:c25ytd,b:b25ytd,od:od25ytd}},
   ];
   document.getElementById('yoy-grid').innerHTML=years.map(y=>
     '<div class="yoy-card">'+
@@ -1544,7 +1541,7 @@ function buildCuYoY(c,ts,selMons2425,selMons26){
   return h;
 }
 
-window._curPer='ytd';
+window._curPer='may';
 function setPer(key,btn){
   window._curPer=key;
   window._selMonths=[];document.querySelectorAll('.ch-mon').forEach(b=>b.classList.remove('on'));
