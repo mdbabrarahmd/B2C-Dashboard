@@ -489,6 +489,9 @@ td:nth-child(4),td:nth-child(5){text-align:center}
 </div>
 <!-- CUSTOMERS -->
 <div class="pg" id="pg-cu">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:6px">
+    <button onclick="printAllHistory()" style="background:#1F4E79;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:.77rem;font-weight:700;cursor:pointer">&#x1F5A8; Print All Customer History</button>
+  </div>
   <div class="per-bar" style="margin-bottom:6px">
     <label>Year:</label>
     <button class="per-btn on" onclick="setCuYr(0,this)">All</button>
@@ -747,7 +750,10 @@ td:nth-child(4),td:nth-child(5){text-align:center}
 <div class="mo" id="modal">
   <div class="mb">
     <button class="mcl" onclick="closeMo()">&#x00D7;</button>
-    <h2 id="mo-name"></h2>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px">
+      <h2 id="mo-name" style="margin:0"></h2>
+      <button onclick="printCust()" style="background:#1F4E79;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">&#x1F5A8; Print Customer</button>
+    </div>
     <div class="mmeta" id="mo-meta"></div>
     <div id="mo-per-bar" style="padding:6px 0 9px;border-bottom:1px solid var(--bdr);margin-bottom:10px">
       <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-bottom:5px">
@@ -777,9 +783,13 @@ td:nth-child(4),td:nth-child(5){text-align:center}
       </div>
     </div>    <div class="mkgrid" id="mo-kpis"></div><div id="mo-yoy" style="padding:0 16px 4px"></div>
     <div class="msec">&#x1F4C8; Sales &amp; Collections by Month</div>
-    <canvas id="mo-c1" data-h="200"></canvas>
+    <canvas id="mo-c1" data-h="190"></canvas>
     <div class="msec">&#x1F4B0; Receivable &amp; OD Trend</div>
-    <canvas id="mo-c2" data-h="180"></canvas>
+    <canvas id="mo-c2" data-h="170"></canvas>
+    <div class="msec">&#x23F1; DSO Trend (Monthly)</div>
+    <canvas id="mo-c3" data-h="150"></canvas>
+    <div class="msec">&#x1F525; OD Aging Breakdown (Monthly)</div>
+    <canvas id="mo-c4" data-h="150"></canvas>
     <div class="msec" style="margin-top:14px">&#x1F4CA; Scenario Simulator</div>
     <div class="sc-box">
       <div class="sc-inputs">
@@ -1500,7 +1510,7 @@ function buildCuYoY(c,ts,selMons2425,selMons26){
     var od2=snapTs(ts.od2_ts,base,snapMo);
     var od3=snapTs(ts.od3_ts,base,snapMo);
     var od4=snapTs(ts.od4_ts,base,snapMo);
-    var calDays=selMons.length>0?selMons.reduce(function(s,m){return s+MDAYS3[m];},0):(yr===2?120:365);
+    var calDays=selMons.length>0?selMons.reduce(function(s,m){return s+MDAYS3[m];},0):(yr===2?151:365);
     var dso=s>0?Math.round(b/(s/calDays)):null;
     return{sales:s,coll:co,bal:b,od:od,od1:od1,od2:od2,od3:od3,od4:od4,dso:dso};
   });
@@ -1622,7 +1632,6 @@ function renderChPage(){
     ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].filter((_,i)=>window._selMonths.includes(i)).join(', '):
     pd.lbl;
   var _clsLblSuffix=window._clsFilter?' · Class '+window._clsFilter+' only':'';
-  document.getElementById('per-lbl').textContent='Comparing '+_effMonsLabel+' across 2024 · 2025 · 2026'+_clsLblSuffix;
   document.getElementById('chyoy-title').textContent='Channel Sales — '+_effMonsLabel+_clsLblSuffix;
   function arr(v,ref,inv,dc){if(v==null||!ref)return '';const p=((v-ref)/Math.abs(ref)*100).toFixed(0);const up=+p>=0;const col=inv?(up?'var(--red)':(dc||'var(--grn)')):(up?'var(--grn)':'var(--red)');return ' <span style="font-size:.67rem;color:'+col+';">'+(+p>=0?'▲':'▼')+Math.abs(p)+'%</span>';}
   function makeChCard(ch,color,label){
@@ -2017,10 +2026,14 @@ function renderMoYoY(){
 function renderMoKpis(){
   var name=window._moName;
   var c=D.customers.find(function(x){return x.name===name;});if(!c)return;
+  var ts=TS[name]||{};
   var selMons=window._moSelMons26;  // KPI cards always show 2026
   var isSnapshot=selMons.length===0;
   var items;
   if(isSnapshot){
+    var _s26ytd=((ts.sales_ts||[]).slice(24,29)).reduce(function(a,b){return a+b;},0);
+    var _b26may=(ts.balance_ts||[])[28]||c.balance;
+    var _dso26=_s26ytd>0?Math.round(_b26may/(_s26ytd/151))+'d':'—';
     items=[
       {l:'Receivable · Jan-May 26',v:'SAR '+f(c.balance),col:'#1F4E79'},
       {l:'Total OD',v:'SAR '+f(c.total_od),col:'#C00000'},
@@ -2028,7 +2041,7 @@ function renderMoKpis(){
       {l:'OD 31-60d',v:'SAR '+f(c.od2),col:'#D97706'},
       {l:'OD 61-90d',v:'SAR '+f(c.od3),col:'#D97706'},
       {l:'OD >90d',v:'SAR '+f(c.od4),col:'#C00000'},
-      {l:'DSO',v:c.dso?c.dso+'d':'-',col:'#D97706'},
+      {l:'DSO · May 26',v:_dso26,col:'#D97706'},
       {l:'Cr. Limit',v:'SAR '+f(c.credit_limit),col:'#555'},
       {l:'Channel Stock · May 26',v:'SAR '+f(c.channel_stock||0),col:'#1D4ED8'},
       {l:'OUD · May 26',v:'SAR '+f(c.oud||0),col:'#7C3AED'},
@@ -2073,8 +2086,19 @@ function openMo(name){
   document.getElementById('modal').classList.add('on');
   setTimeout(function(){
     var cv1=document.getElementById('mo-c1'),cv2=document.getElementById('mo-c2');cv1._d=null;cv2._d=null;
-    MC.bar(cv1,D.periods,[{label:'Sales',data:ts.sales_ts||[],c:'#2E75B6'},{label:'Collections',data:ts.coll_ts||[],c:'#1A7A4A'}]);
-    MC.line(cv2,D.periods,[{label:'Receivable',data:ts.balance_ts||[],c:'#1F4E79',fill:true,w:2},{label:'Total OD',data:ts.od_ts||[],c:'#C00000',w:2,dash:[4,3]}]);
+    MC.bar(cv1,D.periods,[{label:'Sales',data:ts.sales_ts||[],c:'#2E75B6',labels:true},{label:'Collections',data:ts.coll_ts||[],c:'#1A7A4A',labels:true}],{labels:true});
+    MC.line(cv2,D.periods,[{label:'Receivable',data:ts.balance_ts||[],c:'#1F4E79',fill:true,w:2,labels:true},{label:'Total OD',data:ts.od_ts||[],c:'#C00000',w:2,dash:[4,3],labels:true}]);
+    var cv3=document.getElementById('mo-c3'),cv4=document.getElementById('mo-c4');
+    if(cv3){cv3._d=null;
+      var _dsoTs=D.periods.map(function(_,i){var s12=(ts.sales_ts||[]).slice(Math.max(0,i-11),i+1).reduce(function(a,b){return a+b;},0);var b=(ts.balance_ts||[])[i]||0;return s12>0?Math.round(b/(s12/365)):null;});
+      MC.line(cv3,D.periods,[{label:'DSO (days)',data:_dsoTs,c:'#D97706',w:2.5,fill:false,labels:true}]);}
+    if(cv4){cv4._d=null;
+      MC.bar(cv4,D.periods,[
+        {label:'OD 1-30d',data:ts.od1_ts||[],c:'#FFCC00'},
+        {label:'OD 31-60d',data:ts.od2_ts||[],c:'#FF8C00'},
+        {label:'OD 61-90d',data:ts.od3_ts||[],c:'#DC5000'},
+        {label:'OD >90d',data:ts.od4_ts||[],c:'#C00000'},
+      ],{stacked:true,hideEmpty:true});}
   },80);}
 function closeMo(){document.getElementById('modal').classList.remove('on');}
 document.getElementById('modal').addEventListener('click',function(e){if(e.target.id==='modal')closeMo();});
@@ -2193,6 +2217,81 @@ function excSimHtml(c,excAmt,cols){
   }
   h+='</tbody></table></div>';
   return h;
+}
+
+function printCust(){
+  var name=window._moName;
+  var c=D.customers.find(function(x){return x.name===name;});if(!c)return;
+  var ts=TS[name]||{};
+  // Capture canvas images
+  function cvImg(id){var cv=document.getElementById(id);return cv?cv.toDataURL('image/png'):null;}
+  var img1=cvImg('mo-c1'),img2=cvImg('mo-c2'),img3=cvImg('mo-c3'),img4=cvImg('mo-c4');
+  var win=window.open('','_blank','width=900,height=800');
+  var css='body{font-family:Arial,sans-serif;font-size:.82rem;margin:24px;color:#1A2340}';
+  css+='.kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}';
+  css+='.kcard{background:#F0F4F8;border:1px solid #D1D5DB;border-radius:7px;padding:9px 11px}';
+  css+='.kl{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#6B7A99;margin-bottom:3px}';
+  css+='.kv{font-size:.92rem;font-weight:700;color:#1A2340}';
+  css+='.sec{font-size:.75rem;font-weight:700;color:#1F3864;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 5px;border-bottom:2px solid #1F3864;padding-bottom:3px}';
+  css+='.chc{margin-bottom:12px}.cmp-tbl{width:100%;border-collapse:collapse;font-size:.78rem}';
+  css+='.cmp-tbl th{padding:6px 9px;color:#fff;text-align:center}.cmp-tbl td{padding:5px 9px;border-bottom:1px solid #e5e7eb}';
+  css+='img{width:100%;border:1px solid #E5E7EB;border-radius:6px;margin-bottom:10px}';
+  css+='@media print{.noprint{display:none}}';
+  var kpis=[
+    {l:'Receivable (Jan-May 26)',v:'SAR '+MC.fmtF(c.balance)},
+    {l:'Total OD',v:'SAR '+MC.fmtF(c.total_od),red:true},
+    {l:'OD 1-30d',v:'SAR '+MC.fmtF(c.od1)},
+    {l:'OD 31-60d',v:'SAR '+MC.fmtF(c.od2)},
+    {l:'OD 61-90d',v:'SAR '+MC.fmtF(c.od3)},
+    {l:'OD >90d',v:'SAR '+MC.fmtF(c.od4),red:true},
+    {l:'Credit Limit',v:'SAR '+MC.fmtF(c.credit_limit)},
+    {l:'Channel / Term',v:c.channel+' / '+c.term},
+  ];
+  var _s26=((ts.sales_ts||[]).slice(24,29)).reduce(function(a,b){return a+b;},0);
+  var _b26=(ts.balance_ts||[])[28]||c.balance;
+  var _dso=_s26>0?Math.round(_b26/(_s26/151))+'d':'—';
+  kpis.push({l:'DSO (May 26)',v:_dso});
+  var html='<html><head><title>'+name+'</title><style>'+css+'</style></head><body>';
+  html+='<div class="noprint" style="margin-bottom:14px"><button onclick="window.print()" style="background:#1F3864;color:#fff;border:none;padding:7px 20px;border-radius:5px;cursor:pointer">&#x1F5A8; Print / Save PDF</button></div>';
+  html+='<h2 style="margin:0 0 2px;color:#1F3864">'+name+'</h2>';
+  html+='<div style="font-size:.75rem;color:#6B7A99;margin-bottom:12px">Channel: '+c.channel+' · Term: '+c.term+' · Classification: '+(c.classification||'—')+' · Latest: '+c.latest+'</div>';
+  html+='<div class="kgrid">';
+  kpis.forEach(function(k){html+='<div class="kcard"><div class="kl">'+k.l+'</div><div class="kv" style="color:'+(k.red?'#C00000':'#1A2340')+'">'+k.v+'</div></div>';});
+  html+='</div>';
+  html+='<div class="sec">Year-on-Year History</div>';
+  html+=buildCuYoY(c,ts,[],[]);
+  if(img1){html+='<div style="page-break-inside:avoid"><div class="sec">Sales &amp; Collections by Month</div><img src="'+img1+'"></div>';}
+  if(img2){html+='<div style="page-break-inside:avoid"><div class="sec">Receivable &amp; OD Trend</div><img src="'+img2+'"></div>';}
+  if(img3){html+='<div style="page-break-inside:avoid"><div class="sec">DSO Trend</div><img src="'+img3+'"></div>';}
+  if(img4){html+='<div style="page-break-inside:avoid"><div class="sec">OD Aging Breakdown</div><img src="'+img4+'"></div>';}
+  html+='<div style="font-size:.7rem;color:#9CA3AF;margin-top:18px;border-top:1px solid #E5E7EB;padding-top:8px">Generated '+new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · AR Dashboard</div>';
+  html+='</body></html>';
+  win.document.write(html);win.document.close();
+  setTimeout(function(){win.print();},700);
+}
+
+function printAllHistory(){
+  var win=window.open('','_blank','width=900,height=700');
+  var css='body{font-family:Arial,sans-serif;font-size:.8rem;margin:20px}';
+  css+='.chc{margin-bottom:24px;page-break-inside:avoid}';
+  css+='.cmp-tbl{width:100%;border-collapse:collapse;font-size:.75rem}';
+  css+='.cmp-tbl th{padding:6px 10px;color:#fff;text-align:center}';
+  css+='.cmp-tbl td{padding:5px 10px;border-bottom:1px solid #e5e7eb}';
+  css+='.cust-hdr{font-size:.85rem;font-weight:700;color:#1F3864;margin:18px 0 4px;border-top:2px solid #1F3864;padding-top:6px}';
+  css+='@media print{.noprint{display:none}}';
+  var sorted=[...D.customers].sort(function(a,b){return a.name.localeCompare(b.name);});
+  var html='<html><head><title>All Customer History</title><style>'+css+'</style></head><body>';
+  html+='<div class="noprint" style="margin-bottom:16px"><button onclick="window.print()" style="background:#1F3864;color:#fff;border:none;padding:7px 20px;border-radius:5px;cursor:pointer">&#x1F5A8; Print</button></div>';
+  html+='<h2 style="color:#1F3864;margin-bottom:4px">Customer AR History Report</h2>';
+  html+='<div style="font-size:.75rem;color:#6B7A99;margin-bottom:16px">'+new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '+sorted.length+' customers · 2024–2026 YTD</div>';
+  sorted.forEach(function(c){
+    var ts=TS[c.name]||{};
+    html+='<div class="cust-hdr">'+c.name+' <span style="font-weight:400;color:#6B7A99;font-size:.72rem">· '+c.channel+' · '+c.term+'</span></div>';
+    html+=buildCuYoY(c,ts,[],[]);
+  });
+  html+='</body></html>';
+  win.document.write(html);win.document.close();
+  setTimeout(function(){win.print();},600);
 }
 
 function excSearch(){
@@ -3361,4 +3460,4 @@ function _applyChYrFilter(){
 filt();
 </script>
 </body></html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
