@@ -507,6 +507,7 @@ td:nth-child(4),td:nth-child(5){text-align:center}
     <button class="per-btn cu-mon" onclick="setCuMon('mar',this)">Mar</button>
     <button class="per-btn cu-mon" onclick="setCuMon('apr',this)">Apr</button>
     <button class="per-btn cu-mon" onclick="setCuMon('may',this)">May</button>
+    <button class="per-btn cu-mon" onclick="setCuMon('jun',this)">Jun</button>
     <button class="per-btn cu-mon" onclick="setCuMon('q1',this)">Q1</button>
     <button class="per-btn cu-mon" onclick="setCuMon('ytd',this)">YTD</button>
     <span id="cu-per-lbl" style="font-size:.72rem;color:var(--mut);margin-left:auto"></span>
@@ -624,6 +625,7 @@ td:nth-child(4),td:nth-child(5){text-align:center}
         <label><input type="checkbox" value="2" onchange="fhTogMon26(2,this)"> March</label>
         <label><input type="checkbox" value="3" onchange="fhTogMon26(3,this)"> April</label>
         <label><input type="checkbox" value="4" onchange="fhTogMon26(4,this)"> May</label>
+        <label><input type="checkbox" value="5" onchange="fhTogMon26(5,this)"> June</label>
         <div class="fh-dd-actions">
           <button onclick="fhClearMon26()">YTD (All)</button>
           <button onclick="fhClearMon26()">Clear</button>
@@ -780,6 +782,7 @@ td:nth-child(4),td:nth-child(5){text-align:center}
         <button class="per-btn mo-mon-btn26" onclick="moTogMon26(2,this)">Mar</button>
         <button class="per-btn mo-mon-btn26" onclick="moTogMon26(3,this)">Apr</button>
         <button class="per-btn mo-mon-btn26" onclick="moTogMon26(4,this)">May</button>
+        <button class="per-btn mo-mon-btn26" onclick="moTogMon26(5,this)">Jun</button>
         <button class="per-btn" onclick="moClearMons26()" style="margin-left:2px;opacity:.7;font-size:.65rem">Clear</button>
       </div>
     </div>    <div class="mkgrid" id="mo-kpis"></div><div id="mo-yoy" style="padding:0 16px 4px"></div>
@@ -1769,7 +1772,7 @@ function toggleExp(idx){
   if(!isOpen&&!expRow._loaded){expRow.querySelector('.exp-cell').innerHTML=buildExpand(expRow.getAttribute('data-name'));expRow._loaded=true;}}
 
 /* ── PERIOD HELPERS for customer table ── */
-var CU_MON_IDX={jan:0,feb:1,mar:2,apr:3,may:4};
+var CU_MON_IDX={jan:0,feb:1,mar:2,apr:3,may:4,jun:5};
 var CU_MON_LBL={jan:'Jan',feb:'Feb',mar:'Mar',apr:'Apr',may:'May',q1:'Q1',ytd:'YTD'};
 function _cuPeriodActive(){return window._cuMon&&window._cuMon!=='all';}
 function _cuTsIdx(yr,monKey){
