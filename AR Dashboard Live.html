@@ -788,14 +788,13 @@ td:nth-child(4),td:nth-child(5){text-align:center}
         <button class="per-btn" onclick="moClearMons26()" style="margin-left:2px;opacity:.7;font-size:.65rem">Clear</button>
       </div>
     </div>    <div class="mkgrid" id="mo-kpis"></div><div id="mo-yoy" style="padding:0 16px 4px"></div>
-    <div class="msec">&#x1F4C8; Sales &amp; Collections by Month</div>
-    <canvas id="mo-c1" data-h="190"></canvas>
-    <div class="msec">&#x1F4B0; Receivable &amp; OD Trend</div>
-    <canvas id="mo-c2" data-h="170"></canvas>
-    <div class="msec">&#x23F1; DSO Trend (Monthly)</div>
-    <canvas id="mo-c3" data-h="150"></canvas>
-    <div class="msec">&#x1F525; OD Aging Breakdown (Monthly)</div>
-    <canvas id="mo-c4" data-h="150"></canvas>
+    <div class="msec">&#x1F4C8; Sales vs Collections <span style="font-weight:400;color:var(--mut);font-size:.7rem">— last 18 months</span></div>
+    <canvas id="mo-c1" data-h="220"></canvas>
+    <div class="msec">&#x1F4CA; AR Balance &amp; OD Exposure <span style="font-weight:400;color:var(--mut);font-size:.7rem">— last 18 months</span></div>
+    <canvas id="mo-c2" data-h="185"></canvas>
+    <div class="msec">&#x1F525; OD Aging Breakdown <span style="font-weight:400;color:var(--mut);font-size:.7rem">— last 12 months</span></div>
+    <canvas id="mo-c4" data-h="205"></canvas>
+    <canvas id="mo-c3" style="display:none" data-h="1"></canvas>
     <div class="msec" style="margin-top:14px">&#x1F4CA; Scenario Simulator</div>
     <div class="sc-box">
       <div class="sc-inputs">
@@ -2090,20 +2089,30 @@ function openMo(name){
   var yoyEl=document.getElementById('mo-yoy');if(yoyEl)yoyEl.innerHTML=buildCuYoY(c,ts,window._moSelMons2425,window._moSelMons26);
   document.getElementById('modal').classList.add('on');
   setTimeout(function(){
+    // Slice to last 18 months for readability
+    var _N18=Math.min(18,D.periods.length),_s18=D.periods.length-_N18;
+    var _lbs18=D.periods.slice(_s18);
+    var _sl18=function(a){return(a||[]).slice(_s18);};
     var cv1=document.getElementById('mo-c1'),cv2=document.getElementById('mo-c2');cv1._d=null;cv2._d=null;
-    MC.bar(cv1,D.periods,[{label:'Sales',data:ts.sales_ts||[],c:'#2E75B6',labels:true},{label:'Collections',data:ts.coll_ts||[],c:'#1A7A4A',labels:true}],{labels:true});
-    MC.line(cv2,D.periods,[{label:'Receivable',data:ts.balance_ts||[],c:'#1F4E79',fill:true,w:2,labels:true},{label:'Total OD',data:ts.od_ts||[],c:'#C00000',w:2,dash:[4,3],labels:true}]);
-    var cv3=document.getElementById('mo-c3'),cv4=document.getElementById('mo-c4');
-    if(cv3){cv3._d=null;
-      var _dsoTs=D.periods.map(function(_,i){var s12=(ts.sales_ts||[]).slice(Math.max(0,i-11),i+1).reduce(function(a,b){return a+b;},0);var b=(ts.balance_ts||[])[i]||0;return s12>0?Math.round(b/(s12/365)):null;});
-      MC.line(cv3,D.periods,[{label:'DSO (days)',data:_dsoTs,c:'#D97706',w:2.5,fill:false,labels:true}]);}
+    MC.bar(cv1,_lbs18,[
+      {label:'Sales',data:_sl18(ts.sales_ts),c:'#2E75B6'},
+      {label:'Collections',data:_sl18(ts.coll_ts),c:'#1A7A4A'}
+    ]);
+    MC.line(cv2,_lbs18,[
+      {label:'Receivable',data:_sl18(ts.balance_ts),c:'#1F4E79',fill:true,w:2},
+      {label:'Total OD',data:_sl18(ts.od_ts),c:'#C00000',w:2,dash:[4,3]}
+    ]);
+    var cv4=document.getElementById('mo-c4');
     if(cv4){cv4._d=null;
-      MC.bar(cv4,D.periods,[
-        {label:'OD 1-30d',data:ts.od1_ts||[],c:'#FFCC00'},
-        {label:'OD 31-60d',data:ts.od2_ts||[],c:'#FF8C00'},
-        {label:'OD 61-90d',data:ts.od3_ts||[],c:'#DC5000'},
-        {label:'OD >90d',data:ts.od4_ts||[],c:'#C00000'},
-      ],{stacked:true,hideEmpty:true});}
+      var _odN=Math.min(12,D.periods.length),_odS=D.periods.length-_odN;
+      var _odLbs=D.periods.slice(_odS),_slOd=function(a){return(a||[]).slice(_odS);};
+      MC.bar(cv4,_odLbs,[
+        {label:'OD 1-30d',data:_slOd(ts.od1_ts),c:'#FFCC00'},
+        {label:'OD 31-60d',data:_slOd(ts.od2_ts),c:'#FF8C00'},
+        {label:'OD 61-90d',data:_slOd(ts.od3_ts),c:'#DC5000'},
+        {label:'OD >90d',data:_slOd(ts.od4_ts),c:'#C00000'}
+      ],{stacked:true,hideEmpty:true});
+    }
   },80);}
 function closeMo(){document.getElementById('modal').classList.remove('on');}
 document.getElementById('modal').addEventListener('click',function(e){if(e.target.id==='modal')closeMo();});
@@ -2230,7 +2239,7 @@ function printCust(){
   var ts=TS[name]||{};
   // Capture canvas images
   function cvImg(id){var cv=document.getElementById(id);return cv?cv.toDataURL('image/png'):null;}
-  var img1=cvImg('mo-c1'),img2=cvImg('mo-c2'),img3=cvImg('mo-c3'),img4=cvImg('mo-c4');
+  var img1=cvImg('mo-c1'),img2=cvImg('mo-c2'),img4=cvImg('mo-c4');
   var win=window.open('','_blank','width=900,height=800');
   var css='body{font-family:Arial,sans-serif;font-size:.82rem;margin:24px;color:#1A2340}';
   css+='.kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}';
@@ -2241,7 +2250,7 @@ function printCust(){
   css+='.chc{margin-bottom:12px}.cmp-tbl{width:100%;border-collapse:collapse;font-size:.78rem}';
   css+='.cmp-tbl th{padding:6px 9px;color:#fff;text-align:center}.cmp-tbl td{padding:5px 9px;border-bottom:1px solid #e5e7eb}';
   css+='img{width:100%;border:1px solid #E5E7EB;border-radius:6px;margin-bottom:10px}';
-  css+='@media print{.noprint{display:none}}';
+  css+='@media print{.noprint{display:none}table{page-break-inside:avoid}tr{page-break-inside:avoid;page-break-after:auto}.pba{page-break-inside:avoid}}';
   var kpis=[
     {l:'Receivable (Jan-Jun 26)',v:'SAR '+MC.fmtF(c.balance)},
     {l:'Total OD',v:'SAR '+MC.fmtF(c.total_od),red:true},
@@ -2263,12 +2272,48 @@ function printCust(){
   html+='<div class="kgrid">';
   kpis.forEach(function(k){html+='<div class="kcard"><div class="kl">'+k.l+'</div><div class="kv" style="color:'+(k.red?'#C00000':'#1A2340')+'">'+k.v+'</div></div>';});
   html+='</div>';
-  html+='<div class="sec">Year-on-Year History</div>';
-  html+=buildCuYoY(c,ts,[],[]);
-  if(img1){html+='<div style="page-break-inside:avoid"><div class="sec">Sales &amp; Collections by Month</div><img src="'+img1+'"></div>';}
-  if(img2){html+='<div style="page-break-inside:avoid"><div class="sec">Receivable &amp; OD Trend</div><img src="'+img2+'"></div>';}
-  if(img3){html+='<div style="page-break-inside:avoid"><div class="sec">DSO Trend</div><img src="'+img3+'"></div>';}
-  if(img4){html+='<div style="page-break-inside:avoid"><div class="sec">OD Aging Breakdown</div><img src="'+img4+'"></div>';}
+  html+='<div class="pba"><div class="sec">Year-on-Year History</div>'+buildCuYoY(c,ts,[],[])+'</div>';
+  // Monthly data table — last 12 months
+  var _pN=Math.min(12,D.periods.length),_pS=D.periods.length-_pN;
+  var _tbl='<table style="width:100%;border-collapse:collapse;font-size:.75rem;margin-bottom:14px">'
+    +'<thead><tr style="background:#1F3864;color:#fff">'
+    +'<th style="padding:6px 9px;text-align:left">Period</th>'
+    +'<th style="padding:6px 9px;text-align:right">Sales</th>'
+    +'<th style="padding:6px 9px;text-align:right">Collections</th>'
+    +'<th style="padding:6px 9px;text-align:right">Coll. Efficiency<br><span style="font-weight:400;font-size:.65rem">% of opening AR</span></th>'
+    +'<th style="padding:6px 9px;text-align:right">AR Balance</th>'
+    +'<th style="padding:6px 9px;text-align:right">Total OD</th>'
+    +'<th style="padding:6px 9px;text-align:right">OD%</th>'
+    +'</tr></thead><tbody>';
+  for(var _ti=_pS;_ti<D.periods.length;_ti++){
+    var _tsal=(ts.sales_ts||[])[_ti]||0;
+    var _tcol=(ts.coll_ts||[])[_ti]||0;
+    var _tbal=(ts.balance_ts||[])[_ti]||0;
+    var _tod=(ts.od_ts||[])[_ti]||0;
+    var _topbal=(ts.balance_ts||[])[_ti-1]||0;
+    var _teff=_topbal>0?Math.round(_tcol/_topbal*100)+'%':'—';
+    var _teffRate=_topbal>0?_tcol/_topbal:null;
+    var _todpct=_tbal>0?(_tod/_tbal*100).toFixed(0)+'%':'—';
+    var _effCol=_teffRate===null?'#9CA3AF':_teffRate>=0.75?'#166534':_teffRate>=0.4?'#92400E':'#991B1B';
+    var _odCol=_tbal>0&&_tod/_tbal>0.3?'#C00000':_tod>0?'#D97706':'#166534';
+    var _rowbg=_ti%2===0?'#F9FAFB':'#fff';
+    _tbl+='<tr style="background:'+_rowbg+';border-bottom:1px solid #E5E7EB">'
+      +'<td style="padding:5px 9px;font-weight:600">'+D.periods[_ti]+'</td>'
+      +'<td style="padding:5px 9px;text-align:right">'+(_tsal>0?'SAR '+MC.fmtF(_tsal):'—')+'</td>'
+      +'<td style="padding:5px 9px;text-align:right;color:'+(_tcol>0?'#166534':'#9CA3AF')+'">'+(_tcol>0?'SAR '+MC.fmtF(_tcol):'—')+'</td>'
+      +'<td style="padding:5px 9px;text-align:right;font-weight:600;color:'+_effCol+'">'+_teff+'</td>'
+      +'<td style="padding:5px 9px;text-align:right;font-weight:600">'+(_tbal>0?'SAR '+MC.fmtF(_tbal):'—')+'</td>'
+      +'<td style="padding:5px 9px;text-align:right;color:'+(_tod>0?'#C00000':'#9CA3AF')+'">'+(_tod>0?'SAR '+MC.fmtF(_tod):'—')+'</td>'
+      +'<td style="padding:5px 9px;text-align:right;font-weight:600;color:'+_odCol+'">'+_todpct+'</td>'
+      +'</tr>';
+  }
+  _tbl+='<tr style="background:#F0F4F8;font-size:.68rem;color:#6B7A99"><td colspan="4" style="padding:4px 9px">Coll. Efficiency = Collections ÷ Opening AR balance. Green ≥75% · Amber 40–74% · Red &lt;40%</td>'
+    +'<td colspan="3" style="padding:4px 9px;text-align:right">OD% Red &gt;30% · Amber &gt;0%</td></tr>';
+  _tbl+='</tbody></table>';
+  html+='<div class="pba"><div class="sec">Monthly History — last 12 months</div>'+_tbl+'</div>';
+  if(img1){html+='<div style="page-break-inside:avoid"><div class="sec">Sales &amp; Collections — last 18 months</div><img src="'+img1+'"></div>';}
+  if(img2){html+='<div style="page-break-inside:avoid"><div class="sec">AR Balance &amp; OD Exposure — last 18 months</div><img src="'+img2+'"></div>';}
+  if(img4){html+='<div style="page-break-inside:avoid"><div class="sec">OD Aging Breakdown — last 12 months</div><img src="'+img4+'"></div>';}
   html+='<div style="font-size:.7rem;color:#9CA3AF;margin-top:18px;border-top:1px solid #E5E7EB;padding-top:8px">Generated '+new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · AR Dashboard</div>';
   html+='</body></html>';
   win.document.write(html);win.document.close();
