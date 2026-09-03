@@ -8,7 +8,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--nav:#1F3864;--acc:#2E75B6;--acc2:#1F4E79;--bg:#F0F4F8;--card:#fff;
   --bdr:#DDE3EC;--red:#C00000;--grn:#1A7A4A;--amb:#D97706;--txt:#1A2340;--mut:#6B7A99;--lt:#EEF2F7;
-  --BH:#1F6B3A;--OR:#1F4E79;--IR:#843C00}
+  --BH:#1F6B3A;--OR:#1F4E79;--IR:#843C00;--Others:#6B6B6B}
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
 .nav{background:#B91C1C;padding:0 22px;display:flex;align-items:center;justify-content:space-between;
   height:54px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.35)}
@@ -91,7 +91,7 @@ td:nth-child(4),td:nth-child(5){text-align:center}
 .exp-toggle{cursor:pointer;font-size:.85rem;color:var(--acc);padding:0 4px;user-select:none;display:inline-block;transition:transform .2s}
 .exp-toggle.open{transform:rotate(90deg)}
 .pill{display:inline-block;padding:1px 8px;border-radius:9px;font-size:.67rem;font-weight:700;color:#fff}
-.pBH{background:var(--BH)}.pOR{background:var(--OR)}.pIR{background:var(--IR)}
+.pBH{background:var(--BH)}.pOR{background:var(--OR)}.pIR{background:var(--IR)}.pOthers{background:var(--Others)}
 .red{color:var(--red)}.grn{color:var(--grn)}
 .dH{color:var(--red);font-weight:700}.dM{color:var(--amb);font-weight:700}.dO{color:var(--grn);font-weight:700}
 .exp-inner{padding:10px 14px 14px}
@@ -352,7 +352,7 @@ td:nth-child(4),td:nth-child(5){text-align:center}
 </head>
 <body>
 <div style="position:fixed;top:0;right:0;z-index:9999;background:#B91C1C;color:#fff;font-size:.75rem;font-weight:700;padding:4px 14px;border-radius:0 0 0 8px;letter-spacing:.05em;pointer-events:none">LIVE DATA</div><nav class="nav">
-  <div><h1>&#x1F4CA; AR Receivables Dashboard</h1><div class="navsub">Accounts Receivable &middot; Live Analytics &middot; Last updated: 04 Sep 2026, 00:43 Riyadh time</div></div>
+  <div><h1>&#x1F4CA; AR Receivables Dashboard</h1><div class="navsub">Accounts Receivable &middot; Live Analytics &middot; Last updated: 04 Sep 2026, 00:52 Riyadh time</div></div>
   <div class="ntabs">
     <button class="ntab on" onclick="showPg('ov',this)">Overview</button>
     <button class="ntab" onclick="showPg('ch',this)">Channels</button>
@@ -518,9 +518,9 @@ td:nth-child(4),td:nth-child(5){text-align:center}
   <div style="font-size:.72rem;color:var(--mut);background:var(--lt);border:1px solid var(--bdr);border-radius:8px;padding:7px 12px;margin-bottom:8px;line-height:1.6"><strong style="color:var(--txt)">&#x1F4CA; Financial Health (FH) classification:</strong>&nbsp; <span style="color:#4ade80">&#x25CF; Safe</span> — DSO ≤ 180d &amp; OD Rate ≤ avg&nbsp;&nbsp; <span style="color:#fb923c">&#x25C6; Critical</span> — DSO &gt; 180d but low OD Rate (top-right)&nbsp;&nbsp; <span style="color:#f87171">&#x25CF; Potential</span> — DSO &gt; 180d &amp; OD Rate &gt; avg (bottom-right)&nbsp;&nbsp; <span style="color:#fbbf24">&#x26A0; Watch</span> — DSO ≤ 180d but OD Rate &gt; avg</div>  <div class="fbar">
     <label>Channel</label>
     <select id="fCh" onchange="filt()"><option value="">All</option>
-      <option>BH</option><option>OR</option><option>IR</option><option value="IR+BH">IR+BH</option></select>
+      <option>BH</option><option>OR</option><option>IR</option><option value="IR+BH">IR+BH</option><option>Others</option></select>
     <label>Class</label>
-    <select id="fCls" onchange="filt()"><option value="">All</option><option value="A+">A+</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="IR-X">IR-X</option><option value="OR-X">OR-X</option></select>
+    <select id="fCls" onchange="filt()"><option value="">All</option><option value="A+">A+</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="IR-X">IR-X</option><option value="OR-X">OR-X</option><option value="Others">Others</option></select>
     <label>Sort by</label>
     <select id="fSrt" onchange="filt()">
       <option value="od">Total OD</option><option value="bal">Balance</option>
