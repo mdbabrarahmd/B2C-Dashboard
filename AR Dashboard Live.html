@@ -352,7 +352,7 @@ td:nth-child(4),td:nth-child(5){text-align:center}
 </head>
 <body>
 <div style="position:fixed;top:0;right:0;z-index:9999;background:#B91C1C;color:#fff;font-size:.75rem;font-weight:700;padding:4px 14px;border-radius:0 0 0 8px;letter-spacing:.05em;pointer-events:none">LIVE DATA</div><nav class="nav">
-  <div><h1>&#x1F4CA; AR Receivables Dashboard</h1><div class="navsub">Accounts Receivable &middot; Live Analytics &middot; Last updated: 04 Sep 2026, 19:39 Riyadh time</div></div>
+  <div><h1>&#x1F4CA; AR Receivables Dashboard</h1><div class="navsub">Accounts Receivable &middot; Live Analytics &middot; Last updated: 04 Sep 2026, 19:43 Riyadh time</div></div>
   <div class="ntabs">
     <button class="ntab on" onclick="showPg('ov',this)">Overview</button>
     <button class="ntab" onclick="showPg('ch',this)">Channels</button>
@@ -1128,7 +1128,7 @@ function renderOvKpis(){
   var sel=window._ovSelMons.slice().sort(function(a,b){return a-b;});
 
   // 2026 values: filter by selected months or full YTD (Jan-Sep)
-  var mayEnd=Math.min(6,maxI-24);
+  var mayEnd=Math.min(8,maxI-24);  // 2026-09-04: was 6 (Jul) -- current data range is through Sep
   var snapMo=sel.length>0?sel[sel.length-1]:mayEnd;
   var snapIdx=Math.min(24+snapMo,maxI);
 
@@ -1179,7 +1179,7 @@ function renderOvKpis(){
       '<div class="ov-g-rec">'+
         kc('n','&#x1F4B0; Total Receivable','SAR '+f(bal26),'Cr. Limit: SAR '+f(k.credit_limit),null)+
         kc('b','&#x1F465; Active Customers',k.customers,'with receivables tracked',null)+
-        kc('b','&#x23F1; DSO (days)',dsoVal,'YTD basis · Jul 2026',null)+
+        kc('b','&#x23F1; DSO (days)',dsoVal,'YTD basis · Sep 2026',null)+
       '</div>'+
     '</div>'+
     '<div class="ov-strip ov-strip-sal">'+
