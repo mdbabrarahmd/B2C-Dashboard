@@ -126,26 +126,48 @@ footer{
 
 <div class="grid-wrap">
   <div class="section-lbl">Available Dashboards</div>
-  <div class="cards">
-
-    <a class="card" href="AR Dashboard Live.html">
-      <div class="card-icon">&#x26A1;</div>
-      <div class="card-title">AR Receivables Dashboard (Live)</div>
-      <div class="card-desc">
-        Real-time accounts receivable tracking. Monitor live overdue aging data, 
-        instant DSO trend updates, and active exception approval workflows.
-      </div>
-      <div class="card-tags">
-        <span class="tag" style="background:#ffebee; color:#c62828;">🔴 Live Feed</span>
-        <span class="tag">Real-Time Data</span>
-      </div>
-      <div class="card-arrow">&#x2197;</div>
-    </a>
-
+  <div class="cards" id="cards"></div>
+  <div id="none-msg" style="display:none;text-align:center;color:#555;font-size:.9rem;padding:40px 0">
+    You do not have access to any dashboards yet. Please contact the dashboard owner.
   </div>
 </div>
 
 <footer>&copy; 2026 &mdash; Confidential &mdash; Authorized Access Only</footer>
 
+
+<script>
+/* ADD NEW DASHBOARDS HERE: one entry each. The hub only shows a card if the
+   signed-in user can actually open that page (Cloudflare Access answers 403 /
+   login-redirect otherwise), so restricted dashboards stay invisible to people
+   who are not allowed to see them. */
+var DASHBOARDS=[
+  {href:"AR Dashboard Live.html",icon:"\u26A1",title:"AR Receivables Dashboard (Live)",
+   desc:"Real-time accounts receivable tracking. Monitor live overdue aging data, instant DSO trend updates, and active exception approval workflows.",
+   tags:[{t:"\u{1F534} Live Feed",s:"background:#ffebee;color:#c62828;"},{t:"Real-Time Data"}]},
+  {href:"exceptions/",icon:"\u{1F4CB}",title:"Exception Approval",
+   desc:"Salesman exception requests: look up any customer, check credit limit and overdue status, and prepare the approval sheet.",
+   tags:[{t:"Sales Team"},{t:"Approval Workflow"}]}
+];
+(function(){
+  var box=document.getElementById('cards'),shown=0,pending=DASHBOARDS.length;
+  function add(d){
+    var a=document.createElement('a');a.className='card';a.href=d.href;
+    var h='<div class="card-icon">'+d.icon+'</div><div class="card-title"></div><div class="card-desc"></div><div class="card-tags">';
+    (d.tags||[]).forEach(function(g){h+='<span class="tag"'+(g.s?' style="'+g.s+'"':'')+'></span>';});
+    h+='</div><div class="card-arrow">&#x2197;</div>';
+    a.innerHTML=h;
+    a.querySelector('.card-title').textContent=d.title;
+    a.querySelector('.card-desc').textContent=d.desc;
+    var tg=a.querySelectorAll('.tag');(d.tags||[]).forEach(function(g,i){tg[i].textContent=g.t;});
+    box.appendChild(a);shown++;
+  }
+  function done(){pending--;if(pending===0&&shown===0)document.getElementById('none-msg').style.display='block';}
+  DASHBOARDS.forEach(function(d){
+    fetch(d.href,{method:'HEAD',credentials:'same-origin',redirect:'manual',cache:'no-store'})
+      .then(function(r){if(r.ok)add(d);done();})
+      .catch(function(){add(d);done();});   /* network/file:// problem: fail open (page itself is still protected) */
+  });
+})();
+</script>
 </body>
 </html>
